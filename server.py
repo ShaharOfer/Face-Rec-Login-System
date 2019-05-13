@@ -31,13 +31,14 @@ def connect(username, password, image):
         return jsonify({'error': 'Something went wrong'})
     user_data = data[0]
     if user_data['username'] == username and user_data['password'] == string_to_md5(password):
-        eye_distance, avarage_color = recognizer.get_data(image)
-        distance_percentage = (100 * min(eye_distance, user_data['eyes_dis'])) / max(eye_distance,
-                                                                                     user_data['eyes_dis'])
-        color_percentage = (100 * min(avarage_color, user_data['avg_color'])) / max(avarage_color,
-                                                                                    user_data['avg_color'])
-        return jsonify({'success': (distance_percentage + color_percentage) / 2})
-    return jsonify({'error': 'username or password is invalid'})
+        if recognizer.validity_check(image):
+            eye_distance, avarage_color = recognizer.get_data(image)
+            distance_percentage = (100 * min(eye_distance, user_data['eyes_dis'])) / max(eye_distance,
+                                                                                         user_data['eyes_dis'])
+            color_percentage = (100 * min(avarage_color, user_data['avg_color'])) / max(avarage_color,
+                                                                                        user_data['avg_color'])
+            return jsonify({'success': (distance_percentage + color_percentage) / 2})
+    return jsonify({'error': 'username, password or image is invalid'})
 
 
 @app.route('/connect/<string:username>/<string:password>')
@@ -63,9 +64,15 @@ def register(username, password, image):
     global recognizer
     if valid_username(username):
         if valid_password(password):
-            eye_distance, avarage_color = recognizer.get_data(image)
-            return register_to_db(username, password, eye_distance, avarage_color)
-    return jsonify({'error': 'invalid username'})
+            if recognizer.validity_check(image):
+                eye_distance, avarage_color = recognizer.get_data(image)
+                return register_to_db(username, password, eye_distance, avarage_color)
+            else:
+                return jsonify({'error': 'invalid image'})
+        else:
+            return jsonify({'error': 'invalid password'})
+    else:
+        return jsonify({'error': 'invalid username'})
 
 
 @app.route('/register/<string:username>/<string:password>')
