@@ -1,7 +1,7 @@
  <!DOCTYPE html>
 <html>
 	<head>
-		<title>Login</title>
+		<title>Register</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<style>
 		body{
@@ -88,7 +88,7 @@
 
 	<body>
 	<div id="all">
-		<h1>Login</h1>
+		<h1>Register</h1>
 		<div id="main">
 			<div class="center">
 			Username <input type="text" class="center" id="username" style="margin-top:20px;"><br><br>
@@ -101,8 +101,8 @@
 			<div id="results" ></div>
 			
 			<div class="center"><br>
-			<input type=button value="Connect" onClick="get_data()" class="button"><br><br>
-			<p style="margin-bottom:30px;">New User? <a href="register">Register Now!</a></p><br>
+			<input type=button value="Register" onClick="get_data()" class="button"><br><br>
+			<p style="margin-bottom:30px;">Already Have An Account? <a href="login">Login Now!</a></p><br>
 			</div>
 		</div>
 	</div>
@@ -140,7 +140,7 @@
 				password = document.getElementById('password').value
 				current_image = current_image.split("/").join("]");
 				current_image = current_image.split("'").join("[");
-				url = 'http://127.0.0.1:5000/connect/'+username+'/'+password+'/'+current_image
+				url = 'http://127.0.0.1:5000/register/'+username+'/'+password+'/'+current_image
 				var json_obj = JSON.parse(Get(url));
 				console.log(json_obj);
 			}

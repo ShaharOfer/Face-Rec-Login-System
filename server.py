@@ -17,12 +17,37 @@ limiter = Limiter(
 db = TinyDB('users.json')
 recognizer = Recognizer()
 
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    with open('login.html', 'r') as file:
+        return file.read()
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    with open('login.html', 'r') as file:
+        return file.read()
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register_regular():
+    with open('register.html', 'r') as file:
+        return file.read()
+
+
+@app.route('/webcam.min.js', methods=['GET', 'POST'])
+def webcam_min_js():
+    with open('webcam.min.js', 'r') as file:
+        return file.read()
+
+
 """
 Connecting Area
 """
 
 
-@app.route('/connect/<string:username>/<string:password>/<string:image>')
+@app.route('/connect/<string:username>/<string:password>/<string:image>', methods=['GET', 'POST'])
 @limiter.limit("100 per hour")
 def connect(username, password, image):
     global recognizer
@@ -33,7 +58,6 @@ def connect(username, password, image):
     user_data = data[0]
     if user_data['username'] == username and user_data['password'].lower() == string_to_md5(password).lower():
         if recognizer.validity_check(image):
-
             eye_distance, avarage_color = recognizer.get_data(image)
             distance_percentage = (100 * min(eye_distance, user_data['eyes_dis'])) / max(eye_distance,
                                                                                          user_data['eyes_dis'])
@@ -43,13 +67,13 @@ def connect(username, password, image):
     return jsonify({'error': 'username, password or image is invalid'})
 
 
-@app.route('/connect/<string:username>/<string:password>')
+@app.route('/connect/<string:username>/<string:password>', methods=['GET', 'POST'])
 @limiter.limit("300 per hour")
 def connect_no_image(username, password):
     return jsonify({'error': 'forgot image'})
 
 
-@app.route('/connect/<string:username>')
+@app.route('/connect/<string:username>', methods=['GET', 'POST'])
 @limiter.limit("200 per hour")
 def connect_no_password(username):
     return jsonify({'error1': 'forgot password', 'error2': 'forgot image'})
@@ -60,7 +84,7 @@ def connect_no_password(username):
 """"""
 
 
-@app.route('/register/<string:username>/<string:password>/<string:image>')
+@app.route('/register/<string:username>/<string:password>/<string:image>', methods=['GET', 'POST'])
 @limiter.limit("100 per hour")
 def register(username, password, image):
     global recognizer
@@ -77,20 +101,20 @@ def register(username, password, image):
         return jsonify({'error': 'invalid username'})
 
 
-@app.route('/register/<string:username>/<string:password>')
+@app.route('/register/<string:username>/<string:password>', methods=['GET', 'POST'])
 @limiter.limit("300 per hour")
 def register_no_image(username, password):
     return jsonify({'error': 'forgot image'})
 
 
-@app.route('/register/<string:username>')
+@app.route('/register/<string:username>', methods=['GET', 'POST'])
 @limiter.limit("300 per hour")
 def register_no_password(username):
     return jsonify({'error1': 'forgot password', 'error2': 'forgot image'})
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@app.route('/', defaults={'path': ''}, methods=['GET', 'POST'])
+@app.route('/<path:path>', methods=['GET', 'POST'])
 @limiter.limit("300 per hour")
 def catch_all(path):
     return jsonify({"error": "Not Found"})
