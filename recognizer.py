@@ -19,19 +19,18 @@ class Recognizer(object):
         """Putting string data into default image"""
         copy = image_string
         with open(CURRENT, 'wb') as file:
-            copy = copy.replace("|", "+")
-            copy = copy.replace("!", "'")
-            copy = copy.replace("_", "/")
+            copy = copy.replace("[", "'")
+            copy = copy.replace("]", "/")
             file.write(base64.b64decode(copy.encode()))
 
     def validity_check(self, image_string):
         """Checking if image has 1 face and 2 eyes"""
         self.string_to_defult(image_string)
         img = cv2.imread(CURRENT)
-        r = 500.0 / img.shape[1]
-        dim = (500, int(img.shape[0] * r))
-        resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-        gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
+        #r = 500.0 / img.shape[1]
+        #dim = (500, int(img.shape[0] * r))
+        #resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         faces = FACE_CASCADE.detectMultiScale(gray, 1.3, 5)
         if len(faces) != 1:
@@ -82,16 +81,16 @@ class Recognizer(object):
     def get_eyes_distance(self):
         """Recognizing the eyes and calculating the distance between them"""
         img = cv2.imread(CURRENT)
-        r = 500.0 / img.shape[1]
-        dim = (500, int(img.shape[0] * r))
-        resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-        gray = cv2.cvtColor(resized, cv2.COLOR_BGR2GRAY)
+        #r = 500.0 / img.shape[1]
+        #dim = (500, int(img.shape[0] * r))
+        #resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         faces = FACE_CASCADE.detectMultiScale(gray, 1.3, 5)
         for (x, y, w, h) in faces:
             # cv2.rectangle(resized, (x, y), (x + w, y + h), (255, 0, 0), 2)
             roi_gray = gray[y:y + h, x:x + w]
-            roi_color = resized[y:y + h, x:x + w]
+            roi_color = img[y:y + h, x:x + w]
             cv2.imwrite(CROPPED, roi_color)
             eyes = EYE_CASCADE.detectMultiScale(roi_gray)
             for (ex, ey, ew, eh) in eyes:

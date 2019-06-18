@@ -1,0 +1,82 @@
+ <!DOCTYPE html>
+<html>
+	<head>
+		<title>Login</title>
+
+		<style>
+		#my_camera{
+		 width: 320px;
+		 height: 240px;
+		 border: 1px solid black;
+		 margin-left: auto;
+		 margin-right: auto;
+		}
+		#results{
+		 margin-left: auto;
+		 margin-right: auto;
+		 width: 320px;
+		 height: 240px;
+		}
+		h1{
+		 text-align: center;
+		}
+		.center{
+		text-align:center;
+		}
+		</style>
+	</head>
+	
+	<body>
+		<h1 id="h1">Login</h1>
+		<div class="center">
+		Username: <input type="text" class="center" id="username"><br><br>
+		Password: <input type="text" class="center" id="password"><br><br>
+		</div>
+		<div id="my_camera"></div>
+		<div class="center"><br>
+		<input type=button value="Take Snapshot" onClick="take_snapshot()"><br><br>
+		 </div>
+		<div id="results" ></div>
+		
+		<input type=button value="Login" onClick="get_data()">
+		<script type="text/javascript" src="webcam.min.js"></script>
+		<!-- Configure a few settings and attach camera -->
+		<script language="JavaScript">
+			var current_image = "";
+			 Webcam.set({
+			 width: 320,
+			 height: 240,
+			 image_format: 'jpeg',
+			 jpeg_quality: 90
+			 });
+			 Webcam.attach( '#my_camera' );
+
+			<!-- Code to handle taking the snapshot and displaying it locally -->
+			function take_snapshot() {
+			 
+			 // take snapshot and get image data
+			 Webcam.snap( function(data_uri) {
+			  // display results in page
+			  document.getElementById('results').innerHTML = 
+			  '<img src="'+data_uri+'"/>';
+			  current_image = data_uri.replace("data:image/jpeg;base64,","");
+			  } );
+			}
+			function httpGet(theUrl)
+			{
+				var xmlHttp = new XMLHttpRequest();
+				xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+				xmlHttp.send( null );
+				return xmlHttp.responseText;
+			}
+			function get_data(){
+				username = document.getElementById('username').value
+				password = document.getElementById('password').value
+				current_image = current_image.split("/").join("]");
+				current_image = current_image.split("'").join("[");
+				url = 'http://127.0.0.1:5000/connect/'+username+'/'+password+'/'+current_image
+				document.write(httpGet(url));
+			}
+		</script>
+	</body>
+</html>

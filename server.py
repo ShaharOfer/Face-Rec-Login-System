@@ -5,7 +5,6 @@ from tinydb import TinyDB
 from tinydb import Query
 import hashlib
 from recognizer import Recognizer
-import sys
 
 app = Flask(__name__)
 # Limiting the requests to avoid DOS attack
@@ -34,6 +33,7 @@ def connect(username, password, image):
     user_data = data[0]
     if user_data['username'] == username and user_data['password'].lower() == string_to_md5(password).lower():
         if recognizer.validity_check(image):
+
             eye_distance, avarage_color = recognizer.get_data(image)
             distance_percentage = (100 * min(eye_distance, user_data['eyes_dis'])) / max(eye_distance,
                                                                                          user_data['eyes_dis'])
