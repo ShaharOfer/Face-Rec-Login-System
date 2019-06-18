@@ -92,7 +92,9 @@ def register(username, password, image):
         if valid_password(password):
             if recognizer.validity_check(image):
                 eye_distance, avarage_color = recognizer.get_data(image)
-                return register_to_db(username, password, eye_distance, avarage_color)
+                register_to_db(username, password, eye_distance, avarage_color)
+                return jsonify(
+                    {"username": username, "password": password, "eyes_dis": eye_distance, 'avg_color': avarage_color})
             else:
                 return jsonify({'error': 'invalid image'})
         else:
@@ -139,7 +141,6 @@ def register_to_db(username, password, eyes_distance, avarage_color):
     global db
     db.insert({"username": username, "password": string_to_md5(password), "eyes_dis": eyes_distance,
                'avg_color': avarage_color})
-    return {"username": username, "password": password, "eyes_dis": eyes_distance, 'avg_color': avarage_color}
 
 
 def get_user_data(username):
