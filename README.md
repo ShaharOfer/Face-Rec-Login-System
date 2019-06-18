@@ -1,2 +1,2 @@
 # log-in-face
-Log in system based in face recognition
+Log in system based on face recognition
