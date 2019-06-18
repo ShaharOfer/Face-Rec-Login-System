@@ -1,2 +1,5 @@
-# log-in-face
-Log in system based on face recognition
+# Face-Rec-Login-System
+Face Recognition Log in system.
+
+Written in python3
+
