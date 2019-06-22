@@ -16,7 +16,11 @@ SIZE = (128, 128)
 
 class Recognizer(object):
     def string_to_defult(self, image_string):
-        """Putting string data into default image"""
+        """
+        Receiving image string and converting it to an image
+        :param image_string: string("'" -> "[", "/" -> "]")
+        :return: None, Save the image in checking.jpg
+        """
         copy = image_string
         with open(CURRENT, 'wb') as file:
             copy = copy.replace("[", "'")
@@ -24,12 +28,16 @@ class Recognizer(object):
             file.write(base64.b64decode(copy.encode()))
 
     def validity_check(self, image_string):
-        """Checking if image has 1 face and 2 eyes"""
+        """
+        Checking if image has only ONE face and TWO eyes
+        :param image_string: string("'" -> "[", "/" -> "]")
+        :return: boolean value
+        """
         self.string_to_defult(image_string)
         img = cv2.imread(CURRENT)
-        #r = 500.0 / img.shape[1]
-        #dim = (500, int(img.shape[0] * r))
-        #resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        # r = 500.0 / img.shape[1]
+        # dim = (500, int(img.shape[0] * r))
+        # resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         faces = FACE_CASCADE.detectMultiScale(gray, 1.3, 5)
@@ -45,7 +53,11 @@ class Recognizer(object):
         return True
 
     def get_data(self, image_string):
-        """Calculating and returning the data"""
+        """
+        The main function of the class to get data from an image
+        :param image_string: string("'" -> "[", "/" -> "]")
+        :return: two parameters: 1. the distance between the eyes. 2. The average color of the face
+        """
         self.string_to_defult(image_string)
         eyes_distance = self.get_eyes_distance()
         average_color = self.get_average_color()
@@ -56,7 +68,12 @@ class Recognizer(object):
     """"""
 
     def calculate_distance(self, point1, point2):
-        """Calculating distance between two points"""
+        """
+        Calculating the distance of two points
+        :param point1: list -> [x, y]
+        :param point2: list -> [x, y]
+        :return: float, the distance between the points
+        """
         return math.sqrt(pow(point1[0] - point2[0], 2) + pow(point1[1] - point2[1], 2))
 
     def calculate_middle(self, eyes, roi):
@@ -79,11 +96,15 @@ class Recognizer(object):
                                                                                                            eye2[3]) / 2)
 
     def get_eyes_distance(self):
-        """Recognizing the eyes and calculating the distance between them"""
+        """
+        The main function of the eyes distance calculation.
+        Recognizing the eyes and calculating the distance between them
+        :return: float, the eyes distance.
+        """
         img = cv2.imread(CURRENT)
-        #r = 500.0 / img.shape[1]
-        #dim = (500, int(img.shape[0] * r))
-        #resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        # r = 500.0 / img.shape[1]
+        # dim = (500, int(img.shape[0] * r))
+        # resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         faces = FACE_CASCADE.detectMultiScale(gray, 1.3, 5)
@@ -102,7 +123,11 @@ class Recognizer(object):
     """"""
 
     def get_average_color(self):
-        """Finding the average color of the face (Another authentication)"""
+        """
+        The main function of the face's average color calculation.
+        Finding the average color of the face
+        :return: float, the average color in the face.
+        """
         self.resize()
         im = Image.open(CROPPED)
         gray_im = self.rgb2gray(im)
@@ -112,14 +137,19 @@ class Recognizer(object):
         return divided
 
     def get_rgb_list(self, im):
-        """Receiving an Image image and returning list of RGB"""
+        """
+        Converting image into a RGB list
+        :param im: An Image image.
+        :return: List, (int, int, int). The RGB values in the image
+        """
         pixels = list(im.getdata())
         return [pixels[i * im.size[0]:(i + 1) * im.size[0]] for i in range(im.size[1])][0]
 
     def get_avg(self, list_pixels):
         """
-        Receiving list of RGB values.
         Finding the average color in the list.
+        :param list_pixels: List of RGB values -> (int, int, int)
+        :return: The average color -> float
         """
         counter = 0
         sum = 0
@@ -129,12 +159,19 @@ class Recognizer(object):
         return sum / counter
 
     def rgb2gray(self, im):
-        """Getting Image image and returning it gray"""
+        """
+        Converting a colored image to gray image.
+        :param im: Colored Image image
+        :return: Grayed image.
+        """
         matrix = (0.2, 0.5, 0.3, 0.0, 0.2, 0.5, 0.3, 0.0, 0.2, 0.5, 0.3, 0.0)
         return im.convert('RGB', matrix)
 
     def resize(self):
-        """Resizing the cropped.jpg image"""
+        """
+        Resizing the image to even size
+        :return: None, Saving the cropped image to cropped.jpg
+        """
         im = Image.open(CROPPED)
         im.thumbnail((SIZE[0], SIZE[1]), Image.ANTIALIAS)
         im.save(CROPPED, "JPEG")

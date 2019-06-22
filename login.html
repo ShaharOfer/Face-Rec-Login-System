@@ -102,10 +102,12 @@
 			
 			<div class="center"><br>
 			<input type=button value="Connect" onClick="get_data()" class="button"><br><br>
+			<p id="data_from_server"></p>
 			<p style="margin-bottom:30px;">New User? <a href="register">Register Now!</a></p><br>
 			</div>
 		</div>
 	</div>
+	
 		<script type="text/javascript" src="webcam.min.js"></script>
 		<!-- Configure a few settings and attach camera -->
 		<script language="JavaScript">
@@ -127,22 +129,25 @@
 			  document.getElementById('results').innerHTML = 
 			  '<img src="'+data_uri+'"/>';
 			  current_image = data_uri.replace("data:image/jpeg;base64,","");
+			  //data_uri is the base64 image
 			  } );
 			}
 			function Get(yourUrl){
+				<!-- Sending data to the server and reading the JSON from it -->
 				var Httpreq = new XMLHttpRequest(); // a new request
 				Httpreq.open("GET",yourUrl,false);
 				Httpreq.send(null);
 				return Httpreq.responseText;          
 			}
 			function get_data(){
+				<!-- By click, organize the data and activates Get() function -->
 				username = document.getElementById('username').value
 				password = document.getElementById('password').value
 				current_image = current_image.split("/").join("]");
 				current_image = current_image.split("'").join("[");
 				url = 'http://127.0.0.1:5000/connect/'+username+'/'+password+'/'+current_image
 				var json_obj = JSON.parse(Get(url));
-				console.log(json_obj);
+				document.getElementById("data_from_server").innerHTML = JSON.stringify(json_obj);
 			}
 		</script>
 	</body>
